@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}{{ post.title }} · The Personal Journal{% endblock %}
+{% block content %}
+<article class="mx-auto article">
+  <a href="{% url 'home' %}" class="text-decoration-none">← Back to stories</a>
+  <div class="text-primary fw-semibold small mt-4">{{ post.category|default:"Journal" }} · {{ post.created_at|date:"F d, Y" }}</div>
+  <h1 class="display-5 fw-bold my-3">{{ post.title }}</h1>
+  <p class="text-secondary">By {{ post.author.username }}</p>
+  {% if post.cover_image %}<img class="img-fluid rounded-4 my-4 w-100" src="{{ post.cover_image.url }}" alt="{{ post.title }}">{% endif %}
+  <div class="article-content">{{ post.content|linebreaks }}</div>
+</article>
+<hr class="my-5">
+<section class="mx-auto article"><h2 class="h3">Comments</h2>
+{% for comment in comments %}<div class="border-bottom py-3"><strong>{{ comment.name }}</strong><small class="text-secondary ms-2">{{ comment.created_at|date:"M d, Y" }}</small><p class="mb-0 mt-2">{{ comment.body|linebreaksbr }}</p></div>{% empty %}<p class="text-secondary">No comments yet. Be the first.</p>{% endfor %}
+<h3 class="h5 mt-4">Leave a comment</h3><form method="post" action="{% url 'add_comment' post.slug %}">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary">Submit comment</button></form>
+</section>
+{% endblock %}

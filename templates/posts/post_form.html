@@ -1,0 +1,2 @@
+{% extends 'base.html' %}{% block title %}{{ heading }}{% endblock %}
+{% block content %}<div class="form-card mx-auto wide"><a href="{% url 'dashboard' %}" class="text-decoration-none">← Dashboard</a><h1 class="h2 fw-bold my-3">{{ heading }}</h1><form method="post" enctype="multipart/form-data">{% csrf_token %}{{ form.as_p }}<button class="btn btn-primary">Save post</button></form></div>{% endblock %}

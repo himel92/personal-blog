@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Home · The Personal Journal{% endblock %}
+{% block content %}
+<section class="hero rounded-4 p-4 p-lg-5 mb-5">
+  <span class="badge text-bg-light mb-3">NOTES, IDEAS & STORIES</span>
+  <h1 class="display-4 fw-bold">A little space for<br>big thoughts.</h1>
+  <p class="lead text-secondary col-lg-7">Personal stories, useful ideas, and things worth remembering.</p>
+  <form class="d-flex gap-2 col-lg-6" method="get"><input class="form-control" name="q" value="{{ query }}" placeholder="Search articles..."><button class="btn btn-dark">Search</button></form>
+</section>
+<div class="d-flex flex-wrap gap-2 mb-4">
+  <a class="btn btn-sm {% if not active_category %}btn-dark{% else %}btn-outline-dark{% endif %}" href="{% url 'home' %}">All</a>
+  {% for category in categories %}<a class="btn btn-sm {% if active_category == category.slug %}btn-dark{% else %}btn-outline-dark{% endif %}" href="?category={{ category.slug }}">{{ category.name }}</a>{% endfor %}
+</div>
+<div class="row g-4">
+{% for post in page_obj %}
+  <div class="col-md-6 col-lg-4"><article class="card h-100 border-0 shadow-sm blog-card">
+    {% if post.cover_image %}<img src="{{ post.cover_image.url }}" class="card-img-top cover" alt="{{ post.title }}">{% else %}<div class="cover-placeholder"></div>{% endif %}
+    <div class="card-body p-4">
+      <div class="small text-primary fw-semibold mb-2">{{ post.category|default:"Journal" }} · {{ post.created_at|date:"M d, Y" }}</div>
+      <h2 class="h4"><a class="text-decoration-none text-dark" href="{% url 'post_detail' post.slug %}">{{ post.title }}</a></h2>
+      <p class="text-secondary">{{ post.excerpt|default:post.content|truncatechars:130 }}</p>
+      <a href="{% url 'post_detail' post.slug %}" class="fw-semibold text-decoration-none">Read story →</a>
+    </div>
+  </article></div>
+{% empty %}<div class="col-12"><div class="text-center py-5"><h3>No published posts yet</h3><p class="text-secondary">Create an account and publish your first story.</p><a class="btn btn-primary" href="{% url 'register' %}">Get started</a></div></div>{% endfor %}
+</div>
+{% if page_obj.has_other_pages %}<nav class="mt-5"><ul class="pagination justify-content-center">
+{% if page_obj.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}&q={{ query }}">Previous</a></li>{% endif %}
+<li class="page-item disabled"><span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span></li>
+{% if page_obj.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}&q={{ query }}">Next</a></li>{% endif %}
+</ul></nav>{% endif %}
+{% endblock %}
